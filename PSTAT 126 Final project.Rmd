@@ -1,6 +1,6 @@
 ---
 title: "Final project"
-author: "Gain Wang"
+author: "Eric Wang"
 date: "June 11, 2020"
 output: pdf_document
 ---
