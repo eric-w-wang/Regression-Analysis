@@ -1,0 +1,175 @@
+---
+title: "PSTAT 126 HW6"
+author: "Eric Wang"
+date: "5/13/2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## ## Problem One, Part A
+
+Examine the scatterplot matrix for (fertility, log(ppgdp), pctUrban), and comment on the marginal relationships.
+
+ANS: From the scatter matrix for (fertility, log(ppgdp), pctUrban), we can say that Fertility and log(ppgdp) has a negative correlation, Fertility and pctUrban has a negative correlation, and log(ppgdp) and pctUrban has a positive correlation
+
+```{r cars}
+library(alr4) 
+data(UN11)
+# find the scatter matrix
+pairs(fertility ~ log(ppgdp)+pctUrban,data=UN11) 
+
+```
+
+## Problem One, Part B
+
+Fit the two simple regressions fertility  log(ppgdp) and fertility  pctUrban, and verify that the slopes are signicantly dierent from zero at any conventional level of significance.
+
+ANS: The slope of log(ppgdp) is siginificantly different from zero at any conventional level of significance as the p value is relatively lower than any alpha value.
+
+```{r 1}
+# fit the model
+fit0=lm(fertility~log(ppgdp),data=UN11)
+fit1=lm(fertility ~ pctUrban, data= UN11)
+summary(fit0)
+summary(fit1)
+
+
+```
+## Problem One, Part C
+
+Obtain the added-variable plots for both predictors. Based on the added-variable plots, does log(ppgdp) seem to be useful after adjusting for pcturban, and similarly, does pcturban seem to be useful after adjusting for log(ppgdp)?
+
+ANS: From the avPlot, log(ppgdp) seems to be useful as it has a steep slope. On the otherhand, pctUrban also seems to not be as useful as it relatively neutral against fertility.
+
+```{r 2}
+# added variable plot
+av = avPlots(lm(fertility~log(ppgdp)+pctUrban,data=UN11))
+
+```
+## Problem Two, Part A
+
+Examine the scatterplots for all variables, and comment on the marginal relationships.
+
+ANS: From the scatter matrix, we can say that BSAAM and OPBPC has a postitive correlation, BSAAM and OPRC has a postive correlation, and BSAAM OPSLAKE has a negative correlation.
+
+
+```{r 3}
+library(alr4)
+data("water")
+# find the scatter matrix
+pairs(BSAAM~OPBPC + OPRC + OPSLAKE, data=water)
+
+
+
+```
+## Problem Two, Part B
+
+Fit the three simple regressions for BSAAM  OPBPC, BSAAM  OPRC, and BSAAM  OPSLAKE and verify that the slope coecients are signicantly dierent from 0 at any conventional level of signicance.
+
+ANS: The slope of OPRC, OPSLAKE, and OPBPC is siginificantly different from zero at any conventional level of significance as the p value is relatively lower than any alpha value.
+
+```{r 4}
+# fit the model
+fit2=lm(BSAAM~OPBPC, data = water)
+fit3=lm(BSAAM~OPRC, data = water)
+fit4=lm(BSAAM~OPSLAKE, data = water)
+
+summary(fit2)
+summary(fit3)
+summary(fit4)
+```
+## Problem Two, Part C
+
+Obtain the added-variable plots for the model. Report your findings.
+
+ANS: For the OPBPC predictor avplots, the predictor OPBPC contains no additional useful information in predicting BSAAM
+     For the OPRC predictor avplots, the predictor OPRC contains significant information in predicting BSAAM
+     For the OPSLAKE predictor avplots, the predictor OPSLAKE contains significant information in predicting BSAAM
+
+```{r 5}
+# added variable plot
+fit5=lm(BSAAM~OPBPC+OPRC+OPSLAKE, data = water)
+avPlots(fit5)
+
+```
+## Problem Two, Part D
+
+Get the regression summary for the regression of BSAAM on these three regressors. Include OPBPC, OPRC, and OPSLAKE sequentially. Explain the values on the \Pr(> jtj)" column of your output, with given  = :05.
+
+ANS: IF the p-value is greater than the alpha value, then we fail to reject Ho. If the p-value is less than the alpha value, then we reject Ho.
+     For the "(intercept)", since the p-value is 1.1e-0.7 and the given alpha value is 0.05. The p-value is less than the alpha value. Thus, we reject Ho.
+     For the OPBPC, since the p-value is 0.93599 and the given alpha value is 0.05. The p-value is greater than the alpha value. Thus, we fail to reject Ho.
+     For the OPRC, since the p-value is 0.00633 and the given alpha value is 0.05. The p-value is less than the alpha value. Thus, we reject Ho.
+     For the OPSLAKE, since the p-value is 0.00410 and the given alpha value is 0.05. The p-value is is less than the alpha value. Thus, we reject Ho.
+
+```{r 6}
+summary(fit5)
+
+```
+## Problem Two, Part E
+
+Interpret the appropriate R2 value in (d).
+
+ANS: The Adjusted R-squared is 0.8941 which is close to 1.This means that 89.41% of variablity in the response is explained by a MLR model with all the predictors collectively.. This also means that there is a strong linear relationship among all predictors.
+
+## Problem Two, Part F
+
+Use a built-in function, anova(), in R, to conduct a global F-test of whether or not
+1 = 2 = 3 = 0 given  = :05. State the alternative hypothesis, p-value, decision rule,
+and conclusion.
+
+ANS: Null hypothesis: BetaOPBPC = BetaOPRC = BetaOPSLAKE = 0
+     Alternative Hypothesis: for some Beta j is not equal to zero, j=1,2,3 (or at least one of Beta j is not equal to zero).
+     Given the alpha value is 0.05, the p-value of the Gobal F test is less than 2.2e-16 (is close to zero). And all p-values are less than the alpha value of 0.05. 
+     Thus, we reject Ho as a result.
+     This means that for some or atleast one of Beta j is not equal to zero
+
+```{r 7}
+# anova table of fit5
+anova(fit5)
+
+
+```
+## Problem Three, Part A
+
+Fit a model with total sat score as the response and expend, ratio and salary as predictors sequentially.
+1. Test the hypothesis that 3 = 0; i.e. salary = 0; at  = 0:05: What is your conclusion for this test?
+
+   ANS: Since the p-value against salary is 0.0667 is greater than the alpha value of 0.05, we fail to reject the null hypothesis. 
+   
+2. Test the hypothesis that 1 = 2 = 3 = 0 i.e. expend = ratio = salary = 0; at alpha = 0:05: What is your conclusion for this test?
+
+   ANS: Using the global F test, the p- value of the global F test is 0.01209 which is less than the 0.05 alpha value. THis means that we reject Ho and Ho is not true. 
+   
+3. Do any of these predictors have an eect on the response?
+
+   ANS: At least one of them is different from zero and at least one of them have an effect on the response.
+```{r 8}
+library(faraway)
+data("sat")
+# fit the model
+fit6 = lm(total ~ expend + ratio + salary, data = sat)
+summary(fit6)
+
+```
+## Problem Three, Part B
+
+Now add takers to the model. Test the hypothesis that takers = 0; at  = 0:05: What is your conclusion? To conrm your conclusion, draw the added-variable plots for the model.
+Report your findings.
+
+ANS: We reject Ho as well since p-value of the Global F test is less than the 0.05 alpha value.
+```{r 9}
+library(faraway)
+data("sat")
+# fit the model
+fit6b = lm(total ~ expend + ratio + salary + takers, data = sat)
+summary(fit6b)
+# added variable plot
+av6b = avPlots(fit6b)
+
+```

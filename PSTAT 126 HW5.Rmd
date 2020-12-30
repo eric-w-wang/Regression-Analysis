@@ -1,0 +1,126 @@
+---
+title: "Regression analysis 3"
+author: "Eric Wang"
+date: "5/7/2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Problem One, Part A
+Draw diagnostic plots: Residuals vs. Fitted, and a Q-Q plot. Comment on any violation of the standard linear model assumptions seen in these plots.
+
+ANS: It violates the normality assumption as not all points follow an overall linear path on the qq line. It violates the constant variance assumption beacause as the fitted value increases, the residuals becomes more spread out.
+```{r alr4 baeskel A}
+library(alr4)
+data("baeskel")
+tension<- baeskel$Tension
+sulfur<-baeskel$Sulfur
+model1<- lm(tension~sulfur)
+yhat = fitted(model1)
+e = tension - yhat
+plot(yhat, e, xlab = "Fitted Values", ylab = "Residuals", main = "Residual VS Fits")
+abline(h = 0, lty = 2, col = "red")
+
+qqnorm(e)
+qqline(e, col = "red")
+
+```
+
+## Problem One, Part B
+
+Consider two alternative models given by the predictor transformations 1/Sulfur and
+log(Sulfur). With Sulfur on the horizontal axis and Tension on the vertical axis,
+t these two alternatives and plot the regression ts along with the t from part (a).
+
+```{r alr4 baeskel B}
+sulfur1<-(1/sulfur)
+model2<-lm(tension~sulfur1)
+plot(model2, which = c(1,2))
+abline(model2)
+sulfur2<-log(sulfur)
+model3<-lm(tension~sulfur2)
+plot(model3,which = c(1,2))
+abline(model3)
+invTranPlot(tension ~ sulfur, lambda=c(-1, 0, 1))
+
+
+```
+
+## Problem One, Part C
+
+Replace Sulfur by its logarithm, and consider transforming the response Tension. To do
+this, nd and report the optimal power transformation,bML using the Box-Cox procedure discussed in class. Should you transform the variable? Explain.
+
+ANS:  Optimal Power Transformation: 0.7424242
+      The variable is not necessary to be transformed because the lambda = 1 is above the 95% CI.
+```{r alr4 baeskel C}
+model3<-lm(tension~sulfur2)
+boxcox<- boxCox(model3, lambda = seq(-1,1.5, by = 0.1))
+
+# Optimal lambda
+opt.lambda <- boxcox$x[which.max(boxcox$y)]
+opt.lambda
+
+plot(lm(tension^(1)~sulfur2), which = c(1,2))
+plot(lm(tension^(opt.lambda)~sulfur2), which = c(1,2))
+plot(lm(tension^(0.5)~sulfur2), which = c(1,2))
+
+
+
+```
+
+## Problem Two, Part A
+Use the boxCox() or boxcox() function to determine the best transformation on the
+response.
+
+ANS: The best transformation would be transforming with lamda = 0.5 as this is above the 95% CI and closest to the optimal lambda.
+
+```{r faraway trees A}
+library(faraway)
+data("trees")
+
+girth<- trees$Girth
+volume<-trees$Volume
+model4 <- lm(volume~girth)
+boxcox<- boxCox(model4, lambda = seq(-1,1, by = 0.1))
+
+# optimal lambda
+opt.lambda <- boxcox$x[which.max(boxcox$y)]
+opt.lambda
+
+
+```
+
+## Problem Two, Part B
+
+Draw diagnostic plots with the transformed response from (a): Residuals vs. Fitted, and
+a Q-Q plot. Comment on any violation of the standard linear model assumptions seen in
+these plots.
+
+ANS: It did not violate the normality assumption because all points follows a general linear path on the qq line. It violates the constant variance assmuption because as the fitted value increases, the residuals becomes less spread out and then more spread out.
+
+```{r faraway trees B}
+girth1 <- girth^(0.5)
+volume<-trees$Volume
+model5 <- lm(volume~girth1)
+# show the residual vs fitted plot and the qq plot
+plot(model5, which = c(1,2))
+
+```
+
+## Problem Two, Part C
+
+Use the invTranPlot() function to determine if we need further transformation for the
+predictor. Specify the lambda values as c(􀀀1;􀀀0:5; 0; 0:5; 1) in the function.
+
+ANS: further transformation necessary as the girth^(2.48) transformation will be the most optimal fit
+
+```{r faraway trees C}
+invTranPlot(volume ~ girth, lambda=c(-1,-0.5,0, 0.5, 1))
+
+```

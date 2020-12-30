@@ -1,0 +1,227 @@
+---
+title: "PSTAT 126 HW2"
+author: "Eric Wang"
+date: "4/16/2020"
+output:
+  word_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Problem Number One, Part A
+Draw the scatterplot of ppgdp against fertility and describe the relationship between these two variables. Is the trend linear?
+
+ANS: Using the code below, fertility is shown to be decreasing at a faster rate and ppgdp is slowly increasing. A decreasing trend is presented. This trend seems not to be a linear trend but rather a decreasing exponential trend.
+```{r UN11A}
+# call for the UN11 data
+library(alr4)
+data(UN11)
+# assigns all data in fertility category of UN11 to fertility
+fertility = UN11$fertility
+# assigns all data in ppgdp category of UN11 to ppgdp
+ppgdp = UN11$ppgdp
+# make a scatter plot with x as fertility and y as ppgdp
+plot(fertility,ppgdp,xlab="Fertility",ylab="PPGDP",main="Scatter Plot")
+# create a regression model naming ppgdpvsfertility
+ppgdpvsfertility = lm(ppgdp~fertility)
+# create a summary of the data comparison 
+summary(ppgdpvsfertility)
+
+```
+
+
+## Problem Number One, Part B
+
+Replace both variables by their natural logarithms and draw another scatterplot. Does the simple linear regression model seem plausible for a summary of this graph?
+
+ANS: As shown below, the scatter plot presented a linear relationship between the log of fertility and the log of ppgdp. The included summary shows a adjusted residual of 0.5236. There are definitely some outliers that is affecting the fetility. Approximately, the simple linear regression model seem plausible for a summary for this graph
+
+```{r UN11B}
+# call for the UN11 data
+library(alr4)
+data(UN11)
+# assigns all data in log(fertility) category of UN11 to fertility
+fertility = log(UN11$fertility)
+# assigns all data in log(ppgdp) category of UN11 to ppgdp
+ppgdp = log(UN11$ppgdp)
+# make a scatter plot with x as fertility and y as ppgdp
+plot(fertility,ppgdp,xlab="Fertility",ylab="PPGDP",main="Scatter Plot")
+summary(lm(fertility~ppgdp))
+
+```
+
+### Problem Number One, Part C
+
+Without using the R function lm(),find the least-squares estimates regressing log(ppgdp) on log(fertility) and add the line in the plot in (b).
+
+ANS: Using the code below, the computed values are fertilitybar=0.91223, ppgdpbar = 8.46379, Sfertility = 39.1982, Sppgdp = 480.47483, Sfertilityppgdp = -99.53026, beta1hat=-2.53915, and beta0hat=10.78000965.
+```{r UN11C}
+# call for the UN11 data
+library(alr4)
+data(UN11)
+# assigns all data in log(fertility) category of UN11 to fertility
+fertility = log(UN11$fertility)
+# assigns all data in log(ppgdp) category of UN11 to ppgdp
+ppgdp = log(UN11$ppgdp)
+fertilitybar = mean(fertility)
+## [1] 0.91223
+ppgdpbar = mean(ppgdp)
+## [1] 8.46379
+# sum of squres, using the formula
+Sfertility = sum((fertility-fertilitybar)^2)
+## [1] 39.1982
+Sppgdp = sum((ppgdp-ppgdpbar)^2)
+## [1] 480.47483
+Sfertilityppgdp = sum((fertility-fertilitybar)*(ppgdp-ppgdpbar))
+## [1] -99.53026
+# estimate of the value of the slope with the formula from lecture
+beta1hat = Sfertilityppgdp/Sfertility
+## [1] -2.53915
+# estimate if the value of the intercept with the formula provided in lecture
+beta0hat = ppgdpbar-beta1hat*fertilitybar
+## [1] 10.78000965
+# fitted values calculation
+ppgdphat = beta0hat+beta1hat*fertility
+# Draw a scatter plot using plot(), including the fitted line
+plot(fertility,ppgdp,xlab="lcavol",ylab="lpsa",main="lpsa vs lcavol",abline(beta0hat,beta1hat,col= 'red'))
+```
+
+#### Problem Number Two, Part A
+
+Draw a scatterplot. Does a simple linear regression model seem reasonable?
+
+ANS: A simple linear regression model seem reasonable because as lcavol increases, lpsa increases as well. The graph shows a linear positive relationship between lpsa and lcavol.
+```{r prostateA}
+# retrieve the data in prostate
+library(faraway)
+data(prostate)
+# assign data in the lcavol category to lacavol
+x = prostate$lcavol
+# assign data in the lpsa category to lpsa
+y = prostate$lpsa
+# Draw a scatter plot using plot()
+plot(x,y,xlab="lcavol",ylab="lpsa",main="lpsa vs lcavol")
+```
+
+##### Problem Number Two, Part B
+
+Without using the R function lm(), compute the values x;  Y ; SXX; SY Y and SXY . Compute the ordinary least squares estimates of the intercept and slope for the simple linear regression model, and draw the fitted line on your plot from part (a).
+
+ANS: Using the code below, the computed values are xbar=1.350009579, ybar = 2.4783870103, Sx = 133.359034, Sy = 127.9175839930, Sxy = 95.9278, beta1hat=0.71932, and beta0hat=1.50729793.
+```{r prostateB}
+# retrieve the data in prostate
+library(faraway)
+data(prostate)
+# assign data in the lcavol category to lacavol
+x = prostate$lcavol
+y = prostate$lpsa
+# means of the sample
+xbar = mean(x)
+## [1] 1.350009579
+ybar = mean(y)
+## [1] 2.4783870103
+# sum of squres, using the formula
+Sx = sum((x-xbar)^2)
+## [1] 133.359034
+Sy = sum((y-ybar)^2)
+## [1] 127.9175839930
+Sxy = sum((x-xbar)*(y-ybar))
+## [1] 95.9278
+# estimate of the value of the slope with the formula from lecture
+beta1hat = Sxy/Sx
+## [1] 0.71932
+# estimate of the value of the intercept with the formula provided in lecture
+beta0hat = ybar-beta1hat*xbar
+## [1] 1.50729793
+# fitted values calculation
+yhat = beta0hat+beta1hat*x
+# Draw a scatter plot using plot(), including the fitted line
+plot(x,y,xlab="lcavol",ylab="lpsa",main="lpsa vs lcavol", abline(beta0hat,beta1hat,col= 'red'))
+```
+
+###### Problem Number Two, Part C
+
+Obtain the estimate of sigma squared and find the estimated standard errors of bhat0 and bhat1.
+
+ANS: Using the code below, the computed values are sse = 58.9147574, mse = 0.62015534, seb1 = 0.06819, and seb0 = 0.1219368
+
+```{r prostateC}
+#get the number of observations
+n = length(x)
+## [1] 97L
+# apply the formula for sum of square error
+sse = Sy-beta1hat*Sxy
+## [1] 58.9147574
+# apply the mean square error formula
+mse = sse/(n-2)
+## [1] 0.62015534
+# standard errors estimation
+seb1 = sqrt(mse/Sx)
+## [1] 0.06819
+seb0 = sqrt(mse*sum(x^2)/(n*Sx))
+## [1] 0.1219368
+
+```
+
+###### Problem Number Two, Part D
+
+Find the estimated covariance between b0 and b1, i.e. Cov b0; b1 b:
+
+ANS: Using the code below, the estimated computed value is cov = -0.006277907287
+
+```{r prostateD}
+# estimated cov between bhat0 and bhat1
+cov = -mse*xbar/Sx
+## [1] -0.006277907287
+
+```
+
+###### Problem Number Two, Part E
+
+Carry out t-tests for the two null hypotheses 0 = 0 and 1 = 0, reporting the value of the test statistic and a p-value in each case.
+
+ANS: Using the code below, the computed values are t_statb0 = 12.3613022211, p_valb0 = 0.000125, t_statb1 = 10.5483175586397, and p_valb1 = 1.11861577347983e-17
+
+```{r prostateE}
+# beta 0 test statistics
+t_statb0 = beta0hat/seb0
+## [1] 12.3613022211
+
+# beta 0 p- value, using the formula
+p_valb0 = pt(abs(t_statb0),df=n-2,lower.tail=FALSE)+ pt(-abs(t_statb0),df=n-2,lower.tail=TRUE)
+## [1] 1.72223426077146e-21
+
+# beta 1 test statistics
+t_statb1 = beta1hat/seb1
+## [1] 10.5483175586397
+# beta 1 p- value, using the formula
+p_valb1 = pt(abs(t_statb1),df=n-2,lower.tail=FALSE)+ pt(-abs(t_statb1),df=n-2,lower.tail=TRUE)
+## [1] 1.11861577347981e-17
+```
+
+###### Problem Number Two, Part F
+
+Use the R function lm() to fit the regressions of lpsa on lcavol.
+
+```{r prostateF}
+# using the built in function lm to fir the regressions of lpsa on lcavol, given that the data are from prostate
+lpsavslcavol = lm(lpsa~lcavol, data=prostate)
+# create a summary report
+summary(lpsavslcavol)
+
+
+```
+
+
+
+
+
+
+
+
+
+

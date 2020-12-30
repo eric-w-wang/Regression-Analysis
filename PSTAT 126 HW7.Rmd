@@ -1,0 +1,192 @@
+---
+title: "PSTAT 126 HW7"
+author: "Eric Wang"
+date: "5/21/2020"
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Problem One, Part A
+Conduct an F-test of whether or not 1 = 3 = 0 given  = 0:05. State the alternative hypothesis, decision rule, and conclusion.
+
+ANS:
+     Alternative Hypothesis: At least one Beta j is not equal to zero, j=1,2,3 (or at least one of Beta j is not equal to          zero).
+     Given the alpha value is 0.05, the p-value of the F test is 0.004097 (less than alpha value).              
+     Thus, we reject Ho as a result.
+     This means that for some or atleast one of Beta j is not equal to zero
+
+```{r 1a}
+library(alr4)
+data("water")
+# fit 2 model 
+fit1=lm(BSAAM~OPBPC+OPRC+OPSLAKE, data = water)
+fit1b=lm(BSAAM~OPBPC+OPRC, data = water)
+anova(fit1b,fit1)
+
+```
+
+## Problem One, Part B
+
+Use R to produce an ANOVA table for this regression t. Calculate following quantities.
+
+ANS:
+     SSR(OPSLAKE | OPBPC, OPRC) = 6.4165e+08
+     SSR(OPBPC, OPRC, OPSLAKE) = (6.4165e+08) + (2.5616e+09) + (2.1458e+10) = 24661250000
+     SSTO(OPBPC, OPRC, OPSLAKE) = 24661250000 + 2.6895e+09 = 27350750000
+     SSE(OPBPC, OPRC) = (3.3312e+09) = 3331200000
+
+```{r 1b}
+# create two anova table
+anova(fit1)
+anova(fit1b)
+
+```
+
+## Problem Two, Part A
+
+Predict the amount that men with average (given the data) status, income and verbal
+score would gamble along with an appropriate 95% condence interval for the mean
+amount. Interpret the CI.
+
+ANS: We are 95% confident that men with average status, income, and verbal score would gamble between the interval 18.78      and 37.70.
+
+```{r 2a}
+library(faraway)
+data(teengamb)
+sex = teengamb$sex
+status = teengamb$status
+income = teengamb$income
+verbal = teengamb$verbal
+# fit the model 
+fit2 = lm(gamble ~ sex + status + income + verbal, data = teengamb)
+# create new data
+newdata2a = data.frame(sex=0,status = mean(status),income = mean(income),verbal = mean(verbal))
+# confidence interval
+predict(fit2, newdata2a, interval="confidence", level = 0.95)
+```
+
+## Problem Two, Part B
+
+Repeat the prediction for men with maximal values (for this data) of status, income
+and verbal score. Interpret the CI.
+
+ANS: We are 95% confident that men with maximal values of status, income, and verbal score will gamble between the            interval 42.23 and 100.3835.
+
+
+```{r 2b}
+library(faraway)
+data(teengamb)
+sex = teengamb$sex
+status = teengamb$status
+income = teengamb$income
+verbal = teengamb$verbal
+# fit the model
+fit2 = lm(gamble ~ sex + status + income + verbal, data = teengamb)
+# create new data
+newdata2b = data.frame(sex=0,status=max(status),income=max(income),verbal=max(verbal))
+# confidence interval
+predict(fit2, newdata2b, interval="confidence", level = 0.95)
+```
+
+## Problem Two, Part C
+
+Which condence interval is wider and why is the result expected?
+
+ANS: The confidence interval for men with maximal values of status, income, and verbal score is wider than the confidence      interval for men with average values of status, income, and verbal score. The result is expected because it follows      the same concept that as sample size increases, the confidence interval width would increase as well. Men with           maximal status, income, and verbal score has higher range of options to gamble than average men, thus same as the        increase in sample size.
+
+
+## Problem Two, Part D
+
+Fit a model with sqrt(gamble) as the response but with the same predictors. Now predict
+the response and interpret a 95% prediction interval for an individual in (a). You should
+give your answer in the original units of the response.
+
+ANS: The prediction interval is between -0.245 and 8.344082
+
+```{r 2d}
+library(faraway)
+data(teengamb)
+gamble = teengamb$gamble
+sex = teengamb$sex
+status = teengamb$status
+income = teengamb$income
+verbal = teengamb$verbal
+# fit the model
+fit2c = lm(sqrt(gamble)~sex+status+income+verbal)
+# Prediction Interval
+predict(fit2c, newdata2a, interval="predict", level = 0.95)
+```
+
+## Problem Three, Part A
+
+Which plot do you want to draw to check the Linearity assumption? And report your finding(s).
+
+ANS: You draw the residual vs fit plot or the scatter plot. Linearity assumption is violated as as shown by the residual      vs fit plot
+
+```{r 3a}
+library(alr4)
+data("UBSprices")
+fit3 = lm(bigmac2009 ~ bread2009 + rice2009, data = UBSprices)
+# residual vs fitted value plot
+plot(fit3, which = 1)
+
+```
+
+## Problem Three, Part B
+
+Which plot do you want to draw to check the Equal Variances (or Constant Variances)
+assumption? And report your nding(s).
+
+ANS: You draw the Residual vs fit plot. The residual vs fit plot show that the constant variance is violated as the           points becomes more scattered as the fitted values increases.
+
+```{r 3b}
+library(alr4)
+data("UBSprices")
+fit3 = lm(bigmac2009 ~ bread2009 + rice2009, data = UBSprices)
+# residual vs fitted value plot
+plot(fit3, which = 1)
+
+```
+
+## Problem Three, Part C
+
+Which plot do you want to draw to check the Normality assumption? And report your
+nding(s).
+
+ANS: You draw the normal qq plot. The Normal QQ plot violates the normality assumption as not all points are close to the      qqline.
+
+```{r 3c}
+library(alr4)
+data("UBSprices")
+fit3 = lm(bigmac2009 ~ bread2009 + rice2009, data = UBSprices)
+# residual vs fitted value plot
+plot(fit3, which = 2)
+
+```
+
+## Problem Three, Part D
+
+Shapiro-Wilk test is a test of normality of a numeric vector. The null hypothesis for this
+test is that the variable is normally distributed. Use the R function shapiro.test() to test
+if the residuals of the linear t is normally distributed. State the p-value of this test and
+your conclusion given  = 0:05. Does the result support your conclusion in part (c)? (Use
+the code ?shapiro.test or help(shapiro.test) to understand how to use this function.)
+
+ANS: The P-value 9.652e-06 is less than the alpha value of 0.05. This means that we have a strong evidence going against      the normality assumption of residuals, which supports the result of part C.
+
+```{r 3d}
+shapiro.test(fit3$residuals)
+
+```
+
+## Problem Four
+
+ME: Eric Wang 5261423
+Group Member 1: Irene Hsueh 5919725
+Group Member 2: Gain Wang 5467006
