@@ -1,5 +1,5 @@
 ---
-title: "PSTAT 126 HW2"
+title: "Regression Analysis 1"
 author: "Eric Wang"
 date: "4/16/2020"
 output:
