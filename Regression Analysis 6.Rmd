@@ -1,7 +1,7 @@
 ---
-title: "Homework 8"
+title: "Regression Analysis 6"
 subtitle: "PSTAT 126"
-author: "Sampreeth Salveru"
+author: "Eric Wang"
 output: pdf_document
 ---
 
